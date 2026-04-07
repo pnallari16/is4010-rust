@@ -26,7 +26,31 @@ fn main() {
 ///
 /// Hint: use iterator adaptors (.split_whitespace(), .map(), .max_by_key(), etc.)
 pub fn analyze_text(_text: &str) -> (usize, f64, String) {
-    todo!("Implement analyze_text")
+    let words: Vec<&str> = _text.split_whitespace().collect();
+    let count = words.len();
+
+    if count == 0 {
+        return (0, 0.0, String::new());
+    }
+
+    let total_length: usize = words.iter().map(|w| w.len()).sum();
+    let average = total_length as f64 / count as f64;
+
+    let longest = words
+        .iter()
+        .fold(
+            "",
+            |max, &word| {
+                if word.len() > max.len() {
+                    word
+                } else {
+                    max
+                }
+            },
+        )
+        .to_string();
+
+    (count, average, longest)
 }
 
 /// Returns the sum of the squares of all even numbers in `numbers`.
@@ -35,7 +59,11 @@ pub fn analyze_text(_text: &str) -> (usize, f64, String) {
 ///
 /// Hint: .filter(), .map(), .sum()
 pub fn process_numbers(_numbers: &[i32]) -> i32 {
-    todo!("Implement process_numbers")
+    _numbers
+        .iter()
+        .filter(|&&n| n % 2 == 0)
+        .map(|&n| n * n)
+        .sum()
 }
 
 /// Returns a closure that counts up from 1 each time it is called.
@@ -48,7 +76,10 @@ pub fn process_numbers(_numbers: &[i32]) -> i32 {
 /// ```
 pub fn make_counter() -> impl FnMut() -> i32 {
     let mut _count = 0;
-    move || todo!("Implement make_counter — hint: increment _count and return it")
+    move || {
+        _count += 1;
+        _count
+    }
 }
 
 // ============================================================================
@@ -58,7 +89,11 @@ pub fn make_counter() -> impl FnMut() -> i32 {
 /// Divides `a` by `b`.
 /// Returns `Ok(result)` on success, or `Err("division by zero")` when `b` is 0.0.
 pub fn divide(_a: f64, _b: f64) -> Result<f64, String> {
-    todo!("Implement divide")
+    if _b == 0.0 {
+        Err("division by zero".to_string())
+    } else {
+        Ok(_a / _b)
+    }
 }
 
 /// Error type for parse_positive_number.
@@ -72,14 +107,26 @@ pub enum ParseError {
 
 impl fmt::Display for ParseError {
     fn fmt(&self, _f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        todo!("Implement Display for ParseError")
+        match self {
+            ParseError::NotANumber => write!(_f, "input could not be parsed as an integer"),
+            ParseError::NotPositive => write!(_f, "number must be greater than zero"),
+        }
     }
 }
 
 /// Parses `input` as a positive integer (> 0).
 /// Returns the number on success, or an appropriate `ParseError` on failure.
 pub fn parse_positive_number(_input: &str) -> Result<i32, ParseError> {
-    todo!("Implement parse_positive_number")
+    match _input.parse::<i32>() {
+        Ok(num) => {
+            if num > 0 {
+                Ok(num)
+            } else {
+                Err(ParseError::NotPositive)
+            }
+        }
+        Err(_) => Err(ParseError::NotANumber),
+    }
 }
 
 // ============================================================================
